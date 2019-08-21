@@ -14,7 +14,16 @@ class Game extends React.Component {
   
   handleClick = (yesClick) => {
     console.log(yesClick);
-  }
+    this.setState((prevState) => {
+      if (prevState.gameStatus !== 'playing') { 
+        return null; // Do nothing.
+      }
+      const meaningInkMatch = this.state.meaningWord === this.state.inkColor;
+      const correct = (meaningInkMatch ^ yesClick) === 0;
+      return {gameStatus: correct ? 'correct' : 'wrong'};
+    });
+  };
+
   render() {
     return (
       <div className="game">
