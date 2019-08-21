@@ -9,9 +9,12 @@ class Game extends React.Component {
     meaningWord: _.sample(colors), 
     inkWord: _.sample(colors), 
     inkColor: _.sample(colors),
-    gameStatus: 'wrong'
+    gameStatus: 'playing'
   };
   
+  handleClick = (yesClick) => {
+    console.log(yesClick);
+  }
   render() {
     return (
       <div className="game">
@@ -26,8 +29,8 @@ class Game extends React.Component {
           <div className="meaning">{this.state.meaningWord}</div>
           <div className="ink" style={{color: this.state.inkColor}}>{this.state.inkWord}</div>
           <div className="buttons">
-            <button>YES</button>
-            <button>NO</button>
+            <button onClick= {() => {this.handleClick(true)}}>YES</button>
+            <button onClick= {() => {this.handleClick(false)}}>NO</button>
           </div>
         </div>
       </div>
