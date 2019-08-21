@@ -21,8 +21,18 @@ class Game extends React.Component {
       const meaningInkMatch = this.state.meaningWord === this.state.inkColor;
       const correct = (meaningInkMatch ^ yesClick) === 0;
       return {gameStatus: correct ? 'correct' : 'wrong'};
-    });
+    }, this.resetGameAfterDelay);
   };
+
+  resetGameAfterDelay = () => { setTimeout(() => {
+    this.setState({
+      meaningWord: _.sample(colors),
+      inkWord: _.sample(colors),
+      inkColor: _.sample(colors),
+      gameStatus: 'playing',
+});
+}, 500);
+};
 
   render() {
     return (
