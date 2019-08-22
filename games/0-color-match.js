@@ -3,32 +3,39 @@ var jsContainer = document.getElementById("mountNode");
 const colors = [
   'black', 'blue', 'green', 'yellow', 'red'
 ]
-console.log(_.sample(colors));
+const randomColors = () => {
+  const meaningWord = _.sample(colors); 
+  const inkWord = _.sample(colors); 
+  const inkColor = _.sample(colors);
+  return {
+    meaningWord,
+    inkWord,
+    inkColor,
+    meaningInkMatch: meaningWord === inkColor,
+  }; 
+};
+
 class Game extends React.Component {
   state = {
-    meaningWord: _.sample(colors), 
-    inkWord: _.sample(colors), 
-    inkColor: _.sample(colors),
     gameStatus: 'playing'
   };
-  
+
+  coreValues = randomColors();
+
   handleClick = (yesClick) => {
     console.log(yesClick);
     this.setState((prevState) => {
       if (prevState.gameStatus !== 'playing') { 
         return null; // Do nothing.
       }
-      const meaningInkMatch = this.state.meaningWord === this.state.inkColor;
-      const correct = (meaningInkMatch ^ yesClick) === 0;
+      const correct = (this.coreValues.meaningInkMatch ^ yesClick) === 0;
       return {gameStatus: correct ? 'correct' : 'wrong'};
     }, this.resetGameAfterDelay);
   };
 
   resetGameAfterDelay = () => { setTimeout(() => {
+    this.coreValues = randomColors();
     this.setState({
-      meaningWord: _.sample(colors),
-      inkWord: _.sample(colors),
-      inkColor: _.sample(colors),
       gameStatus: 'playing',
 });
 }, 500);
@@ -45,8 +52,8 @@ class Game extends React.Component {
           <div className= {
             `game-status status-${this.state.gameStatus}`
           } />
-          <div className="meaning">{this.state.meaningWord}</div>
-          <div className="ink" style={{color: this.state.inkColor}}>{this.state.inkWord}</div>
+          <div className="meaning">{this.coreValues.meaningWord}</div>
+          <div className="ink" style={{color: this.coreValues.inkColor}}>{this.coreValues.inkWord}</div>
           <div className="buttons">
             <button onClick= {() => {this.handleClick(true)}}>YES</button>
             <button onClick= {() => {this.handleClick(false)}}>NO</button>
