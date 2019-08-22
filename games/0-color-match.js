@@ -6,7 +6,7 @@ const colors = [
 const randomColors = () => {
   const meaningWord = _.sample(colors); 
   const inkWord = _.sample(colors); 
-  const inkColor = _.sample(colors);
+  const inkColor = Math.random() < 0.4 ? meaningWord : _.sample(colors);
   return {
     meaningWord,
     inkWord,
