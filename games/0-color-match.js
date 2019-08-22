@@ -17,7 +17,8 @@ const randomColors = () => {
 
 class Game extends React.Component {
   state = {
-    gameStatus: 'playing'
+    gameStatus: 'playing',
+    score: 0
   };
 
   coreValues = randomColors();
@@ -29,7 +30,17 @@ class Game extends React.Component {
         return null; // Do nothing.
       }
       const correct = (this.coreValues.meaningInkMatch ^ yesClick) === 0;
-      return {gameStatus: correct ? 'correct' : 'wrong'};
+      if(correct) {
+        return {
+          gameStatus: 'correct',
+          score: prevState.score + 1
+        }
+      } else {
+        return {
+          gameStatus: 'wrong',
+          score: prevState.score - 1
+        }
+      }
     }, this.resetGameAfterDelay);
   };
 
@@ -58,6 +69,9 @@ class Game extends React.Component {
             <button onClick= {() => {this.handleClick(true)}}>YES</button>
             <button onClick= {() => {this.handleClick(false)}}>NO</button>
           </div>
+        </div>
+        <div className="help">
+          Your current score is : {this.state.score}
         </div>
       </div>
     );
