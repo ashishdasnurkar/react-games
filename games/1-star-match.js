@@ -8,8 +8,12 @@ const colors = {
 };
 
 class Number extends React.PureComponent {
-  clickHandler = () =>
+  clickHandler = () => {
     console.log('Click on ' + this.props.number);
+    if(!this.props.isUsed) {
+      this.props.onClick(this.props.number);
+    }
+  };
 
   style() {
     if (this.props.isUsed) {
@@ -45,11 +49,38 @@ class Game extends React.Component {
   
   state = {
     stars: 1 + Math.floor(9 * Math.random()),
-    selectedNumbers: [2, 4],
-    usedNumbers: [7, 8]
+    selectedNumbers: [],
+    usedNumbers: []
   };
 
-  selectionIsWrong = _.sum(this.state.selectedNumbers) > this.state.stars;
+  onNumberClick = (number) => {
+    
+    this.setState((prevState) => {
+      let {
+        selectedNumbers,
+        usedNumbers,
+        stars
+      } = prevState;
+
+      selectedNumbers = [...selectedNumbers, number];
+      const selectedSum = _.sum(selectedNumbers);
+
+      if(selectedSum === stars) {
+        usedNumbers = [...usedNumbers, ...selectedNumbers];
+        selectedNumbers = [];
+        stars = 1 + Math.floor(9 * Math.random());
+      }
+
+      this.selectionIsWrong = selectedSum > this.state.stars;
+
+      return {
+        selectedNumbers,
+        usedNumbers,
+        stars
+      };
+  
+    });
+  }
 
   render() {
   
@@ -75,7 +106,9 @@ class Game extends React.Component {
                 number={number} 
                 isUsed={isUsed}
                 isSelected={isSelected}
-                selectionIsWrong={this.selectionIsWrong}/>
+                selectionIsWrong={this.selectionIsWrong}
+                onClick={this.onNumberClick}
+              />
               );
             }
             )}
