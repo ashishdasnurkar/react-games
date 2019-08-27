@@ -7,6 +7,24 @@ const colors = {
   selected: 'deepskyblue',
 };
 
+const randomSum = (arr, maxSum) => {
+  const sets = [
+      []
+    ],
+    sums = [];
+  for (let i = 0; i < arr.length; i++) {
+    for (let j = 0, len = sets.length; j < len; j++) {
+      const candidateSet = sets[j].concat(arr[i]);
+      const candidateSum = _.sum(candidateSet);
+      if (candidateSum <= maxSum) {
+        sets.push(candidateSet);
+        sums.push(candidateSum);
+      }
+    }
+  }
+  return _.sample(sums);
+}
+
 class Number extends React.PureComponent {
   clickHandler = () => {
     console.log('Click on ' + this.props.number);
@@ -46,37 +64,44 @@ class Number extends React.PureComponent {
 
 class Game extends React.Component {
 
-  
+  numbers = _.range(1, 10);
+  stars = _.range(randomSum(this.numbers, 9));
+
   state = {
-    stars: 1 + Math.floor(9 * Math.random()),
     selectedNumbers: [],
     usedNumbers: []
   };
 
+  
   onNumberClick = (number) => {
     
     this.setState((prevState) => {
       let {
         selectedNumbers,
         usedNumbers,
-        stars
       } = prevState;
 
-      selectedNumbers = [...selectedNumbers, number];
-      const selectedSum = _.sum(selectedNumbers);
-
-      if(selectedSum === stars) {
-        usedNumbers = [...usedNumbers, ...selectedNumbers];
-        selectedNumbers = [];
-        stars = 1 + Math.floor(9 * Math.random());
+      if (selectedNumbers.indexOf(number) >= 0) {
+        // Unselect already selected number
+        selectedNumbers = selectedNumbers.filter(sn => sn !== number);
+      } else {
+        selectedNumbers = [...selectedNumbers, number];
       }
 
-      this.selectionIsWrong = selectedSum > this.state.stars;
+      const selectedSum = _.sum(selectedNumbers);
+      this.selectionIsWrong = selectedSum > this.stars.length;
+
+      if(selectedSum === this.stars.length) {
+        usedNumbers = [...usedNumbers, ...selectedNumbers];
+        selectedNumbers = [];
+        this.stars = _.range(
+          randomSum(_.difference(this.numbers, usedNumbers), 9)
+        );
+      }
 
       return {
         selectedNumbers,
         usedNumbers,
-        stars
       };
   
     });
@@ -92,11 +117,11 @@ class Game extends React.Component {
         </div>
         <div className="body">
           <div className="stars">
-            {_.range(this.state.stars).map(starIndex => <div key={starIndex} className="star" />
+            {this.stars.map(starIndex => <div key={starIndex} className="star" />
             )}
           </div>
           <div className="play-numbers">
-            {_.range(1, 10).map(number => {
+            {this.numbers.map(number => {
 
               const isUsed = this.state.usedNumbers.indexOf(number) >= 0;
               const isSelected = this.state.selectedNumbers.indexOf(number) >= 0;
