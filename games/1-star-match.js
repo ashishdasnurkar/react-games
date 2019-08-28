@@ -98,6 +98,8 @@ class Game extends React.Component {
           randomSum(_.difference(this.numbers, usedNumbers), 9)
         );
       }
+      this.gameIsDone =
+        usedNumbers.length === this.numbers.length;
 
       return {
         selectedNumbers,
@@ -106,6 +108,31 @@ class Game extends React.Component {
   
     });
   }
+
+  renderStars() {
+      return this.stars.map(starIndex =>
+        <div className = "star"
+        key = {
+          starIndex
+        }
+        />);
+      }
+
+  renderPlayAgain() {
+      return ( <div className = "game-done" >
+        <div className = "message" > Nice! </div> <button onClick = {
+          this.resetGame
+        }> Play Again </button> </div> );
+  }
+
+  resetGame = () => {
+    this.stars = _.range(randomSum(this.numbers, 9));
+    this.gameIsDone = false;
+    this.setState({
+      selectedNumbers: [],
+      usedNumbers: [],
+    });
+  };
 
   render() {
   
@@ -117,8 +144,9 @@ class Game extends React.Component {
         </div>
         <div className="body">
           <div className="stars">
-            {this.stars.map(starIndex => <div key={starIndex} className="star" />
-            )}
+          {this.gameIsDone
+                ? this.renderPlayAgain() : this.renderStars()
+          }
           </div>
           <div className="play-numbers">
             {this.numbers.map(number => {
