@@ -2,6 +2,7 @@ console.log("All good");
 var jsContainer = document.getElementById("mountNode");
 
 const colors = {
+  available: '#eee',
   used: 'lightgreen', 
   wrong: 'lightcoral', 
   selected: 'deepskyblue',
@@ -28,7 +29,7 @@ const randomSum = (arr, maxSum) => {
 class Number extends React.PureComponent {
   clickHandler = () => {
     console.log('Click on ' + this.props.number);
-    if(!this.props.isUsed) {
+    if(this.props.status !== 'used') {
       this.props.onClick(this.props.number);
     }
   };
@@ -36,6 +37,12 @@ class Number extends React.PureComponent {
   style() {
     if (this.props.isUsed) {
       return { backgroundColor: colors.used };
+    }
+
+    if (this.props.isWrong) {
+      return {
+        backgroundColor: colors.wrong,
+      };
     }
 
     if (this.props.isSelected) {
@@ -49,10 +56,19 @@ class Number extends React.PureComponent {
     return {};
   }
 
+  componentDidUpdate() {
+    console.log('Number updated');
+  }
+
+  componentWillUpdate(nextProps) {
+    console.log(this.props, nextProps);
+  }
+             
+
   render() {
     return (
       <button
-        style={this.style()}
+        style={{ backgroundColor: colors[this.props.status]}}
         className="number"
         onClick={this.clickHandler}
       >
@@ -66,6 +82,7 @@ class Game extends React.Component {
 
   numbers = _.range(1, 10);
   stars = _.range(randomSum(this.numbers, 9));
+  selectionIsWrong = false;
 
   state = {
     selectedNumbers: [],
@@ -133,7 +150,16 @@ class Game extends React.Component {
       usedNumbers: [],
     });
   };
-
+  numberStatus(number) {
+    if (this.state.usedNumbers.indexOf(number) >= 0) {
+      return 'used';
+    }
+    const isSelected = this.state.selectedNumbers.indexOf(number) >= 0;
+    if (isSelected) {
+      return this.selectionIsWrong ? 'wrong' : 'selected';
+    }
+    return 'available';
+  }
   render() {
   
     return (
@@ -157,9 +183,7 @@ class Game extends React.Component {
               return (
               <Number key={number} 
                 number={number} 
-                isUsed={isUsed}
-                isSelected={isSelected}
-                selectionIsWrong={this.selectionIsWrong}
+                status={this.numberStatus(number)}
                 onClick={this.onNumberClick}
               />
               );
