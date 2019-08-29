@@ -56,13 +56,13 @@ class Number extends React.PureComponent {
     return {};
   }
 
-  componentDidUpdate() {
-    console.log('Number updated');
-  }
+  // componentDidUpdate() {
+  //   console.log('Number updated');
+  // }
 
-  componentWillUpdate(nextProps) {
-    console.log(this.props, nextProps);
-  }
+  // componentWillUpdate(nextProps) {
+  //   console.log(this.props, nextProps);
+  // }
              
 
   render() {
