@@ -8,6 +8,8 @@ const colors = {
   selected: 'deepskyblue',
 };
 
+const gameTimeout = 10000;
+
 const randomSum = (arr, maxSum) => {
   const sets = [
       []
@@ -86,7 +88,8 @@ class Game extends React.Component {
 
   state = {
     selectedNumbers: [],
-    usedNumbers: []
+    usedNumbers: [],
+    isGameOver: false
   };
 
   
@@ -136,11 +139,18 @@ class Game extends React.Component {
       }
 
   renderPlayAgain() {
+    if(this.state.isGameOver)
+     {
+      return ( <div className = "game-done" >
+      <div className = "message" > Oh O! GAME OVER </div> </div> );
+     } else {
       return ( <div className = "game-done" >
         <div className = "message" > Nice! </div> <button onClick = {
           this.resetGame
         }> Play Again </button> </div> );
-  }
+       
+      }
+    }
 
   resetGame = () => {
     this.stars = _.range(randomSum(this.numbers, 9));
@@ -148,6 +158,7 @@ class Game extends React.Component {
     this.setState({
       selectedNumbers: [],
       usedNumbers: [],
+      isGameOver: false
     });
   };
   numberStatus(number) {
@@ -160,6 +171,19 @@ class Game extends React.Component {
     }
     return 'available';
   }
+
+  stopTheGame = () => {
+    this.gameIsDone = true;
+    this.setState({
+      isGameOver: true
+    });
+    this.forceUpdate();
+  };
+
+  componentDidMount() {
+    setTimeout(() => {this.stopTheGame()}, gameTimeout);
+  }
+
   render() {
   
     return (
@@ -168,6 +192,7 @@ class Game extends React.Component {
           Pick 1 or more numbers that sum 
           to the number of stars
         </div>
+
         <div className="body">
           <div className="stars">
           {this.gameIsDone
